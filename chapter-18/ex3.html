@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+
+<html>
+
+<body>
+    <div style="display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 20px;">
+        <button id="button-next" style="display: block; width: 150px; height: 30px;">Next</button>
+        <button id="button-autorun" style="display: block; width: 150px; height: 30px;">Auto-Run</button>
+    </div>
+
+    <div id="grid" style="margin-top: 50px; display: block; margin-inline: auto; width: fit-content;">
+        <!-- <input data-x="0" data-y="0" type="checkbox" value="alive"> -->
+    </div>
+
+    <script>
+        const ROWS = 20;
+        const COLUMNS = 20;
+        const SPARCITY = 0.5;
+        const grid = document.querySelector("#grid");
+        for (let y = 0; y < ROWS; y++) {
+            for (let x = 0; x < COLUMNS; x++) {
+                $currentInput = document.createElement("input");
+                $currentInput.setAttribute("data-x", x.toString());
+                $currentInput.setAttribute("data-y", y.toString());
+                $currentInput.type = "checkbox";
+                if (Math.random() < 0.5) $currentInput.checked = true;
+                grid.appendChild($currentInput);
+            }
+            grid.appendChild(document.createElement("br"));
+        }
+
+        function checkCellDOM(xCoord, yCoord) {
+            return document.querySelector(`input[data-x="${xCoord}"][data-y="${yCoord}"]`)?.checked;
+        }
+        function checkCellState(xCoord, yCoord, state) {
+            return state?.[yCoord]?.[xCoord];
+        }
+        function checkNeighbours(cellXCoord, cellYCoord, state) {
+            let aliveNeighbours = 0;
+            if (checkCellState(cellXCoord + 1, cellYCoord, state)) aliveNeighbours++;
+            if (checkCellState(cellXCoord + 1, cellYCoord + 1, state)) aliveNeighbours++;
+            if (checkCellState(cellXCoord, cellYCoord + 1, state)) aliveNeighbours++;
+            if (checkCellState(cellXCoord - 1, cellYCoord + 1, state)) aliveNeighbours++;
+            if (checkCellState(cellXCoord - 1, cellYCoord, state)) aliveNeighbours++;
+            if (checkCellState(cellXCoord - 1, cellYCoord - 1, state)) aliveNeighbours++;
+            if (checkCellState(cellXCoord, cellYCoord - 1, state)) aliveNeighbours++;
+            if (checkCellState(cellXCoord + 1, cellYCoord - 1, state)) aliveNeighbours++;
+            return aliveNeighbours;
+        }
+        function updateCell(currCheckbox, state) {
+            const cellX = Number(currCheckbox.getAttribute("data-x"));
+            const cellY = Number(currCheckbox.getAttribute("data-y"));
+            const alive = currCheckbox.checked;
+            let liveNeighbors = checkNeighbours(cellX, cellY, state);
+
+            if (!alive) {
+                if (liveNeighbors === 3) currCheckbox.checked = true;
+            } else {
+                if (liveNeighbors === 2 || liveNeighbors === 3) currCheckbox.checked = true;
+                else currCheckbox.checked = false;
+            }
+        }
+        function saveGridState(rows, columns) {
+            let result = [];
+            for (let y = 0; y < rows; y++) {
+                let row = [];
+                result.push(row);
+                for (let x = 0; x < columns; x++) {
+                    row.push(checkCellDOM(x, y));
+                }
+            }
+            return result;
+        }
+        function updateCells(rows, columns, state) {
+            for (let y = 0; y < rows; y++) {
+                for (let x = 0; x < columns; x++) {
+                    updateCell(document.querySelector(`input[data-x="${x}"][data-y="${y}"]`), state);
+                }
+            }
+        }
+
+        document.getElementById("button-next").addEventListener("pointerdown", () => {
+            let state = saveGridState(ROWS, COLUMNS);
+            updateCells(ROWS, COLUMNS, state);
+        })
+
+        let intervalID = null;
+        document.getElementById("button-autorun").addEventListener("pointerdown", () => {
+            if (intervalID) {
+                clearInterval(intervalID);
+                intervalID = null;
+                return;
+            }
+            intervalID ??= setInterval(() => {
+                let state = saveGridState(ROWS, COLUMNS);
+                updateCells(ROWS, COLUMNS, state);
+            }, 200);
+        })
+
+    </script>
+</body>
+
+</html>

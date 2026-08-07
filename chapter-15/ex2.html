@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<html>
+
+<body>
+    <div id="mouseTrailParent">
+        <div style="visibility: hidden; position: absolute; background-color: #bee9e8; width: 2rem; height: 2rem; rotate: 3deg;"></div>
+        <div style="visibility: hidden; position: absolute; background-color: #62b6cb; width: 1.1rem; height: 1.1rem; rotate: 70deg;"></div>
+        <div style="visibility: hidden; position: absolute; background-color: #1b4965; width: 1.4rem; height: 1.4rem; rotate: 110deg;"></div>
+        <div style="visibility: hidden; position: absolute; background-color: #cae9ff; width: 1.8rem; height: 1.8rem; rotate: 40deg;"></div>
+        <div style="visibility: hidden; position: absolute; background-color: #5fa8d3; width: 1.6rem; height: 1.6rem; rotate: 80deg;"></div>
+    </div>
+
+    <script>
+        const $mouseTrails = Array.from(document.getElementById("mouseTrailParent").children);
+
+        let currentIndexTrail = 0;
+        let scheduled = null;
+        window.addEventListener("mousemove", (event) => {
+            if (!scheduled) {
+                setTimeout(() => {
+                    const $mouseTrail = $mouseTrails[currentIndexTrail];
+                    if ($mouseTrail.style.visibility === "hidden") $mouseTrail.style.visibility = "visible";
+                    $mouseTrail.style.top = (event.clientY ) + "px";
+                    $mouseTrail.style.left = (event.clientX ) + "px";
+                    currentIndexTrail = (currentIndexTrail + 1) % $mouseTrails.length;
+
+                    scheduled = null;
+                }, 30);
+            }
+            scheduled = event;
+        });
+
+    </script>
+</body>
+
+</html>

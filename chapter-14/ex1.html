@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+
+<body>
+    <div id="mountains"></div>
+
+    <script>
+        const MOUNTAINS = [
+            { name: "Kilimanjaro", height: 5895, place: "Tanzania" },
+            { name: "Everest", height: 8848, place: "Nepal" },
+            { name: "Mount Fuji", height: 3776, place: "Japan" },
+            { name: "Vaalserberg", height: 323, place: "Netherlands" },
+            { name: "Denali", height: 6168, place: "United States" },
+            { name: "Popocatepetl", height: 5465, place: "Mexico" },
+            { name: "Mont Blanc", height: 4808, place: "Italy/France" }
+        ];
+
+        const $mountainDiv = document.getElementById("mountains");
+        const $table = document.createElement("table");
+        $mountainDiv.appendChild($table);
+
+        const $firstTr = document.createElement("tr");
+        $table.appendChild($firstTr);
+        for (let objKey of Object.keys(MOUNTAINS[0])) {
+            $firstTr.appendChild(document.createElement("th"));
+            $firstTr.lastChild.appendChild(document.createTextNode(objKey));
+            $firstTr.lastChild.style.fontSize = "1.5rem";
+        }
+
+        for (let mountain of MOUNTAINS) {
+            const $tr = document.createElement("tr");
+            $table.appendChild($tr);
+            for (property in mountain) {
+                $tr.appendChild(document.createElement("td"));
+                $tr.lastChild.textContent = mountain[property];
+                if (typeof mountain[property] === "number") $tr.lastChild.style.textAlign = "right";
+                $tr.lastChild.style.fontFamily = "sans-serif";
+            }
+        }
+    </script>
+</body>

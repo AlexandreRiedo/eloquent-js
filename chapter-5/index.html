@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <h1>Chapter 5 Exercices</h1>
+    <h2>Ex. 1: Flattening</h2>
+    <p id="ex-1"></p>
+
+    <h2>Ex. 2: Your Own Loop</h2>
+    <p id="ex-2"></p>
+
+    <h2>Ex. 3: Everything</h2>
+    <p id="ex-3"></p>
+
+    <h2>Ex.4 : Dominant Writing Function</h2>
+    <p id="ex-4"></p>
+
+    <!-- Exercice 1 -->
+    <script>
+        let $p1 = document.getElementById("ex-1");
+        let text1 = "";
+
+        let arrays = [[1, 2, 3], [4, 5], [6]];
+        const flattenedArray = arrays.reduce((acc, curr) => acc.concat(curr), []);
+        console.log(flattenedArray);
+        text1 += flattenedArray;
+
+        $p1.innerText += text1;
+    </script>
+
+    <!-- Exercice 2 -->
+    <script>
+        let $p2 = document.getElementById("ex-2");
+        let text2 = "";
+
+        function loop(value, testFunction, updateFunction, bodyFunction) {
+            while (testFunction(value)) {
+                bodyFunction(value);
+                value = updateFunction(value);
+            }
+        }
+
+        loop(3, n => n > 0, n => n - 1, console.log);
+
+        $p2.innerText += text2 + "Cf. the console.";
+    </script>
+
+    <!-- Exercice 3 -->
+    <script>
+        let $p3 = document.getElementById("ex-3");
+        let text3 = "";
+
+        function everyFor(array, test) {
+            for (let item of array) {
+                if (!test(item)) return false;
+            }
+            return true;
+        }
+
+        function every(array, test) {
+            return !array.some((item) => !test(item));
+        }
+
+        console.log(every([1, 3, 5], n => n < 10));
+        // → true
+        console.log(every([2, 4, 16], n => n < 10));
+        // → false
+        console.log(every([], n => n < 10));
+        // → true
+
+        $p3.innerText += text3 + "Cf. the console."; 
+    </script>
+
+    <!-- Exercice 4 -->
+    <script type="module">
+        import { SCRIPTS } from './language-scripts.js';
+        import { characterScript, countBy } from './some-functions.js'
+
+        let $p4 = document.getElementById("ex-4");
+        let text4 = "";
+
+        function dominantDirection(text) {
+            let scripts = countBy(text, char => {
+                let script = characterScript(char.codePointAt(0), SCRIPTS);
+                return script ? script.direction : "none";
+            }).filter(({ name }) => name != "none");
+
+            if (scripts.length === 0) return "No text !";
+
+            return scripts.reduce((acc, curr) => curr.count > acc.count ? curr : acc).name;
+        }
+
+        console.log(dominantDirection("Hello!"));
+        // → ltr
+        console.log(dominantDirection("Hey, مساء الخير"));
+        // → rtl
+        console.log(dominantDirection("こんにちは, Hello!"));
+        // → ltr
+        console.log(dominantDirection("ᠴᠠᢈᠢᠮ ᠡᠷᠢᠨ᠎ᠳᠦ ᠮᠣᠩᠭᠣᠯ ᢈᠡᠯᠡ᠂ ᠮᠣᠩᠭᠣᠯ ᠪᠢᠴᠢᢉ᠎ᠦᠨ ᠲᠧᢈᠨᠣᠯᠣᢉᠢ᠎ᠶᠢᠨ ᠰᠢᠢᠳᠦᠯ ᠰᠢᠨᠡᠴᠢᠯᠡᠯ ᠤᠷᠤᠭᠤき Ah"));
+        // → ttb (ttb script dominates)
+        console.log(dominantDirection(""));
+        // → none
+
+        $p4.innerText += text4 + "Cf. the console."; 
+    </script>
+
+</body>
+
+</html>

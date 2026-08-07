@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <link rel="stylesheet" href="reset.css">
+</head>
+
+<body style="margin: 10px">
+    <textarea id="textarea-code" style="box-sizing: border-box; width: 100%; height: 50vh; margin-inline: auto;" placeholder="Type your code!"></textarea>
+    <div style="display: flex; flex-flow: row; align-items: center; gap: 10px; margin-top: 10px;">
+        <button id="button-run" style="height: 40px; width: 100px;">Run</button>
+        <p id="code-results" style="min-height: 100px; flex: 1; border: 1px solid gray;"></p>
+    </div>
+    <script>
+        const $button = document.getElementById("button-run");
+        const $textarea = document.getElementById("textarea-code");
+        const $resultsElem = document.getElementById("code-results");
+
+        $button.addEventListener(
+            "pointerdown",
+            (event) => {
+                const codeText = $textarea.value;
+                let results;
+                try {
+                    const runJSCode = new Function(codeText);
+                    results = runJSCode();
+                } catch(e) {
+                    results = e;
+                }
+                $resultsElem.textContent = results;
+            }
+        )
+    </script>
+</body>
+
+</html>

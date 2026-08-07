@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+<html>
+
+<body>
+    <canvas width="600" height="400" style="outline: 2px solid black;"></canvas>
+
+    <script>
+        class Vec {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+            }
+
+            plus(otherVec) {
+                return new Vec(this.x + otherVec.x, this.y + otherVec.y);
+            }
+
+            times(multiplier) {
+                return new Vec(this.x * multiplier, this.y * multiplier)
+            }
+        }
+
+        class Ball {
+            constructor(radius, pos, speed) {
+                this.radius = radius;
+                this.pos = pos;
+                this.speed = speed;
+            }
+
+            move(time) {
+                const newPos = this.speed.times(time);
+                this.pos = this.pos.plus(newPos);
+            }
+
+            bounce(boxX, boxY, boxWidth, boxHeight) {
+                if (this.pos.x - this.radius <= boxX || this.pos.x + this.radius >= boxWidth) this.speed.x = this.speed.x * (-1);
+                if (this.pos.y - this.radius <= boxY || this.pos.y + this.radius >= boxHeight) this.speed.y = this.speed.y * (-1);
+            }
+
+            drawOnCanvas(context) {
+                context.beginPath();
+                context.arc(this.pos.x, this.pos.y, this.radius, 0, 2 * Math.PI);
+                context.fillStyle = "hsl(355, 87%, 66%)";
+                context.fill();
+                context.stroke();
+            }
+        }
+
+        let canvas = document.querySelector("canvas");
+        let cx = canvas.getContext("2d");
+        let bouncyBall = new Ball(50, new Vec(200, 100), new Vec(30, 12));
+
+        let lastTime;
+        function step(timestamp) {
+            if (lastTime === undefined) {
+                lastTime = timestamp;
+            }
+            const elapsed = (timestamp - lastTime) / 100;
+            lastTime = timestamp;
+
+            cx.clearRect(0, 0, canvas.width, canvas.height)
+            bouncyBall.bounce(0, 0, canvas.width, canvas.height)
+            bouncyBall.move(elapsed);
+            bouncyBall.drawOnCanvas(cx);
+
+            requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+
+
+    </script>
+</body>
+
+</html>

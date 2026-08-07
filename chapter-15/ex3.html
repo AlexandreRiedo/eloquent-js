@@ -1,0 +1,47 @@
+<!doctype html>
+
+<tab-panel>
+    <div data-tabname="one">Tab one</div>
+    <div data-tabname="two">Tab two</div>
+    <div data-tabname="three">Tab three</div>
+</tab-panel>
+
+<script>
+    function asTabs(parentNode) {
+        const tabArray = Array.from(parentNode.children);
+        const refNode = tabArray[0];
+        let selectedTabIndex = 0;
+        const initButtonColor = "#f5f5f5";
+        const pressedButtonColor = "#bdbdbd";
+
+        for (let $tab of tabArray) {
+            const $button = document.createElement("button");
+            $button.textContent = $tab.getAttribute("data-tabname");
+            $button.style.backgroundColor = pressedButtonColor;
+            parentNode.insertBefore($button, refNode);
+            if ($tab !== tabArray[selectedTabIndex]) {
+                $tab.style.display = "none";
+                $button.style.backgroundColor = initButtonColor;
+            }
+        }
+
+        const buttonArrays = Array.from(parentNode.getElementsByTagName("button"));
+        for (let $button of buttonArrays) {
+            $button.addEventListener("click", () => {
+                selectedTabIndex = buttonArrays.indexOf($button);
+                for (let $tab of tabArray) {
+                    if ($tab !== tabArray[selectedTabIndex]) {
+                        $tab.style.display = "none";
+                    } else {
+                        $tab.style.display = "block";
+                    }
+                }
+                for (let $button of buttonArrays) {
+                    if ($button !== buttonArrays[selectedTabIndex]) $button.style.backgroundColor = initButtonColor;
+                    else $button.style.backgroundColor = pressedButtonColor;
+                }
+            });
+        }
+    }
+    asTabs(document.querySelector("tab-panel"));
+</script>

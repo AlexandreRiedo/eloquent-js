@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <h1>Chapter 6 Exercices</h1>
+    <h2>Ex. 1: RegExp Golf</h2>
+    <p id="ex-1"></p>
+
+    <h2>Ex. 2: Quoting Style</h2>
+    <p id="ex-2"></p>
+
+    <h2>Ex. 3: Numbers Again</h2>
+    <p id="ex-3"></p>
+
+    <!-- Exercice 1 -->
+    <script>
+        let $p1 = document.getElementById("ex-1");
+        let text1 = "";
+
+        // Fill in the regular expressions
+        verify(/ca[rt]/,
+            ["my car", "bad cats"],
+            ["camper", "high art"]);
+
+        verify(/pr?op/,
+            ["pop culture", "mad props"],
+            ["plop", "prrrop"]);
+
+        verify(/ferr(et|y|ari)/,
+            ["ferret", "ferry", "ferrari"],
+            ["ferrum", "transfer A"]);
+
+        verify(/ious\b/,
+            ["how delicious", "spacious room"],
+            ["ruinous", "consciousness"]);
+
+        verify(/\s[.,;:]/,
+            ["bad punctuation ."],
+            ["escape the period"]);
+
+        verify(/\p{L}{7}/u,
+            ["Siebentausenddreihundertzweiundzwanzig"],
+            ["no", "threee small words"]);
+
+        verify(/\b[^\We]+\b/iu,
+            ["red platypus", "wobbling nest"],
+            ["earth bed", "bedrøvet abe", "BEET"]);
+
+
+        function verify(regexp, yes, no) {
+            // Ignore unfinished exercises
+            if (regexp.source == "...") return;
+
+            for (let str of yes) {
+                regexp.lastIndex = 0; // reset before each test
+                if (!regexp.test(str)) {
+                    console.log(`Failure to match '${str}'`);
+                }
+            }
+
+            for (let str of no) {
+                regexp.lastIndex = 0; // reset before each test
+                if (regexp.test(str)) {
+                    console.log(`Unexpected match for '${str}'`);
+                }
+            }
+        }
+
+        $p1.innerText += text1 + "Cf. the console.";
+    </script>
+
+    <!-- Exercice 2 -->
+    <script>
+        let $p2 = document.getElementById("ex-2");
+        let text2 = "";
+
+        let text = "'I'm the cook,' he said, 'it's my job.'";
+        // Change this call.
+        // console.log(text.replace(/(?<=^|\P{L})'|'(?=$|\P{L})/gu, "\""));
+        // → "I'm the cook," he said, "it's my job."
+
+        const examples = [
+            // 1. Simple dialogue
+            {
+                input: `'Hello,' she said.`,
+                expected: `"Hello," she said.`
+            },
+
+            // 2. Multiple dialogue quotes
+            {
+                input: `'Stop!' he shouted. 'Come back here!'`,
+                expected: `"Stop!" he shouted. "Come back here!"`
+            },
+
+            // 3. Contractions only
+            {
+                input: `It isn’t what they’d expected.`,
+                expected: `It isn’t what they’d expected.`
+            },
+
+            // 4. Dialogue + contractions
+            {
+                input: `'I can’t do this,' he said, 'it just isn’t right.'`,
+                expected: `"I can’t do this," he said, "it just isn’t right."`
+            },
+
+            // 5. Dialogue at sentence boundaries
+            {
+                input: `She replied 'yes'.`,
+                expected: `She replied "yes".`
+            },
+
+            // 6. Dialogue with punctuation
+            {
+                input: `'Really?' she asked.`,
+                expected: `"Really?" she asked.`
+            },
+
+            // 7. Apostrophes inside quoted phrase
+            {
+                input: `'That’s John’s car,' he said.`,
+                expected: `"That’s John’s car," he said.`
+            },
+
+            // 8. Quoted single words
+            {
+                input: `The word 'magic' has many meanings.`,
+                expected: `The word "magic" has many meanings.`
+            },
+
+            // 9. Space before closing quote
+            {
+                input: `'Hello there ' she whispered.`,
+                expected: `"Hello there " she whispered.`
+            },
+
+            // 10. Multiple paragraphs
+            {
+                input: `'I’m leaving now.'
+She paused.
+'Don’t try to stop me.'`,
+                expected: `"I’m leaving now."
+She paused.
+"Don’t try to stop me."`
+            }
+        ];
+
+
+        for (let text of examples) {
+            // console.log(text.input.replace(/(?<=^|\P{L})'|'(?=$|\P{L})/gu, "\""));
+            // console.log(text.expected);
+        }
+
+        $p2.innerText += text2 + "Cf. the console.";
+    </script>
+
+    <!-- Exercice 3 -->
+    <script>
+        let $p3 = document.getElementById("ex-3");
+        let text3 = "";
+
+        // Fill in this regular expression.
+        let number = /(^[+-]?\d(\d*|e[+-]\d+)(\.(\de\d|\d*))?$)|(^\.\d+$)/i;
+
+        // Tests:
+        for (let str of ["1", "-1", "+15", "1.55", ".5", "5.",
+            "1.3e2", "1E-4", "1e+12"]) {
+            if (!number.test(str)) {
+                console.log(`Failed to match '${str}'`);
+            }
+        }
+        for (let str of ["1a", "+-1", "1.2.3", "1+1", "1e4.5",
+            ".5.", "1f5", "."]) {
+            if (number.test(str)) {
+                console.log(`Incorrectly accepted '${str}'`);
+            }
+        }
+
+        $p3.innerText += text3 + "Cf. the console."; 
+    </script>
+
+</body>
+
+</html>

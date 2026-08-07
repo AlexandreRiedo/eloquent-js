@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+
+<body>
+    <canvas width="600" height="200" style="outline: 2px solid black;"></canvas>
+    <script>
+        let cx = document.querySelector("canvas").getContext("2d");
+
+        const trapezoid = (x, y, width, shortEdgeFactor, height) => {
+            cx.beginPath();
+            cx.moveTo(x + ((width - width * shortEdgeFactor) / 2), y);
+            cx.lineTo(x + (width * shortEdgeFactor) + ((width - width * shortEdgeFactor) / 2), y);
+            cx.lineTo(x + width, y + height);
+            cx.lineTo(x, y + height);
+            cx.closePath();
+            cx.stroke();
+        };
+        function diamond(x, y, size, angleDegree) {
+            const angleRadians = angleDegree * 2 * Math.PI / 360;
+            cx.save();
+            cx.translate(x, y);
+            cx.translate(size / 2, size / 2)
+            cx.rotate(angleRadians);
+            cx.translate(-size / 2, -size / 2)
+            cx.fillStyle = "red";
+            cx.fillRect(0, 0, size, size);
+            cx.restore();
+        };
+        function zigzag(x, y, width, height, edgesNumber) {
+            cx.beginPath();
+            cx.lineTo(x, y);
+            let onLeftSide = true;
+            for (let currY = y + (height / edgesNumber); Math.floor(currY) <= y + height; currY += (height / edgesNumber)) {
+                if (onLeftSide) {
+                    cx.lineTo(x + width, currY);
+                    onLeftSide = false;
+                } else {
+                    cx.lineTo(x, currY);
+                    onLeftSide = true;
+                }
+            }
+            cx.stroke();
+            cx.closePath();
+        };
+        function spiral(x, y, sizeIsh, edgesNumber, spiralNumber) {
+            let angle = 0;
+            let radius = 0;
+
+            cx.save();
+            cx.beginPath();
+            cx.moveTo(x, y);
+            for (let i = 0; i <= edgesNumber; i++) {
+                cx.lineTo(x + Math.cos(angle) * radius, y + Math.sin(angle) * radius);
+                angle += (2 * Math.PI / (edgesNumber / spiralNumber));
+                radius += sizeIsh;
+            }
+            cx.stroke();
+            cx.restore();
+        };
+        function kiki(x, y, radius, spikesNumber, spikeDepth) {
+            const angle = 2 * Math.PI / spikesNumber;
+            const angleOffset = angle / 2;
+            const xCenter = x + radius;
+            const yCenter = y + radius;
+
+            cx.beginPath();
+            cx.moveTo(
+                xCenter+radius,
+                yCenter
+            );
+            for (let i = 1; i <= spikesNumber; i++) {
+                cx.quadraticCurveTo(
+                    xCenter + (Math.cos(angle * i - angleOffset) * radius * spikeDepth),
+                    yCenter + (Math.sin(angle * i - angleOffset) * radius * spikeDepth),
+                    xCenter + Math.cos(angle * i) * radius,
+                    yCenter + Math.sin(angle * i) * radius
+                )
+                console.log(Math.cos(angle * i));
+            }
+            cx.fillStyle = "yellow";
+            cx.fill();
+        };
+
+
+        trapezoid(40, 40, 50, 2, 80);
+        diamond(140, 40, 50, 30);
+        zigzag(220, 40, 50, 110, 20);
+        spiral(340, 80, 0.6, 100, 3.01);
+        kiki(440, 20, 50, 8, 0.4);
+    </script>
+</body>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <h1>Chapter 2 Exercices</h1>
+    <h2>Ex. 1: Looping A Triangle</h2>
+    <p id="ex-1"></p>
+
+    <h2>Ex. 2: FizzBuzz</h2>
+    <p id="ex-2"></p>
+
+    <h2>Ex. 3: Chessboard</h2>
+    <p id="ex-3" style="line-height: 1ch; letter-spacing: -1.6px;"></p>
+
+    <!-- Exercice 1 -->
+    <script>
+        let $p1 = document.getElementById("ex-1");
+        let text1 = "";
+        const triangleSize = 8;
+
+        for (let i = 0; i < triangleSize; i++) {
+
+            for (let u = 0; u < i + 1; u++) {
+                text1 = text1 + "#"
+            }
+
+            if (i !== triangleSize - 1) {
+                text1 = text1 + "\n";
+            }
+        }
+        $p1.innerText += text1;
+    </script>
+
+    <!-- Exercice 2 -->
+    <script>
+        let $p2 = document.getElementById("ex-2");
+        let text2 = "";
+
+        for (let i = 1; i <= 30; i++) {
+            if ((i % 3 === 0) && (i % 5 === 0)) {
+                text2 += (i + " FizzBuzz\n");
+            }
+            else if (i % 3 === 0) {
+                text2 += (i + " Fizz\n");
+            } else if (i % 5 === 0) {
+                text2 += (i + " Buzz\n");
+            }
+        }
+
+        $p2.innerText += text2;
+    </script>
+
+    <!-- Exercice 3 -->
+    <script>
+        let $p3 = document.getElementById("ex-3");
+        let text3 = "";
+        const gridSize = 8;
+
+        for (let i = 0; i < gridSize; i++) {
+            for (let u = 0; u < gridSize; u++) {
+                if (i % 2 === 0) {
+                    if (u % 2 === 0) {
+                        text3 += "■";
+                    } else {
+                        text3 += "□";
+                    }
+                } else {
+                    if (u % 2 === 0) {
+                        text3 += "□";
+                    } else {
+                        text3 += "■";
+                    }
+                }
+            }
+            text3 += "\n"
+        }
+
+        $p3.innerText += text3;
+    </script>
+</body>
+
+</html>

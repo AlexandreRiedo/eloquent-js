@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <h1>Chapter 7 Exercice 3</h1>
+    <h2>Ex. 3: Persistent Group</h2>
+    <p id="ex-3"></p>
+
+    <!-- Exercice 3 -->
+    <script>
+        let $p3 = document.getElementById("ex-3");
+        let text3 = "";
+
+        class PGroup {
+            static empty = new PGroup();
+
+            constructor(data) {
+                if (data) this.data = data;
+                else this.data = []
+            }
+
+            add(value) {
+                if (this.has(value)) return this;
+                let newData = this.data.concat([value]);
+                return new PGroup(newData);
+            }
+
+            delete(value) {
+                let newData = this.data.filter(item => item !== value);
+                return new PGroup(newData);
+            }
+
+            has(value) {
+                return this.data.includes(value);
+            }
+
+        }
+
+        let emptyTest = PGroup.empty;
+        console.log(emptyTest);
+
+        let a = PGroup.empty.add("a");
+        let ab = a.add("b");
+        let dupA = a.add("a");
+        console.log(a);
+        console.log(ab);
+        console.log(dupA);
+
+        let b = ab.delete("a");
+        console.log(b);
+        
+        let deleteA = a.delete("a");
+        console.log(deleteA)
+        console.log(a);
+
+        console.log(b.has("b"));
+        // → true
+        console.log(a.has("b"));
+        // → false
+        console.log(b.has("a"));
+        // → false
+
+        $p3.innerText += text3 + "Cf. the console."; 
+    </script>
+
+</body>
+
+</html>

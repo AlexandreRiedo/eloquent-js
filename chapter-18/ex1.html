@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+
+<html>
+
+<body>
+    <div id="req1"></div>
+    <div id="req2"></div>
+    <div id="req3"></div>
+    <div id="req4"></div>
+
+    <script>
+        const eloquentURL = "https://eloquentjavascript.net/author";
+        const badUrl = "Ouch"
+
+        async function req1() {
+            try {
+                const response1 = await fetch(eloquentURL, {
+                    method: "GET",
+                    headers: {
+                        accept: "text/plain",
+                    },
+                })
+                if (!response1.ok) {
+                    throw new Error("It didn't work !");
+                }
+                document.getElementById("req1").textContent = await response1.text();
+
+            } catch (e) {
+                console.log("Error : " + e);
+            }
+        }
+        req1();
+
+        const response2Headers = new Headers();
+        response2Headers.append("accept", "text/html");
+        const response2Options = {
+            method: "GET",
+            headers: response2Headers,
+        }
+        const response2 = fetch(eloquentURL, response2Options);
+        response2
+            .then(response => {
+                if (!response.ok) return Promise.reject("Not OK");
+                else return response;
+            })
+            .then(response => response.text())
+            .then(text => {
+                console.log("Response 2 success: " + text)
+                return text
+            })
+            .then(text => {
+                document.getElementById("req2").innerHTML = text;
+            })
+            .catch(error => console.log("Response 2 failed:" + error))
+            ;
+
+        async function getRequestResult(requestObject, id) {
+            try {
+                const response = await fetch(requestObject);
+                if (!response.ok) throw new Error("This request failed with code " + response.status);
+                const result = await response.text();
+                console.log(`Response ${id} success: ` + result);
+                document.getElementById(id).innerHTML = result;
+            } catch (e) {
+                console.log("Error ", e);
+            }
+        }
+
+        const response3Headers = new Headers();
+        response3Headers.append("accept", "application/json");
+        const response3Options = {
+            method: "GET",
+            headers: response3Headers
+        };
+        const response3Request = new Request(eloquentURL, response3Options);
+        getRequestResult(response3Request, "req3");
+        getRequestResult(
+            new Request(response3Request, { headers: { "accept": "application/rainbows+unicorns", } }),
+            "req4");
+    </script>
+</body>
+
+</html>

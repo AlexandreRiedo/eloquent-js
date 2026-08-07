@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+<html>
+
+<body>
+    <div id="balloon" style="font-size: 200px; text-align: center;">🎈</div>
+    <div style="height: 2000px; background-color: cornflowerblue;"></div>
+    <script>
+        const $balloon = document.getElementById("balloon");
+
+        const balloonResize = (event) => {
+            event.preventDefault();
+
+            if (event.key === "ArrowUp") $balloon.style.fontSize = (parseInt($balloon.style.fontSize) * 1.1).toString() + "px";
+            if (event.key === "ArrowDown") $balloon.style.fontSize = (parseInt($balloon.style.fontSize) * 0.9).toString() + "px";
+
+            if (parseInt($balloon.style.fontSize) >= 400) {
+                $balloon.textContent = "💥";
+                window.removeEventListener("keydown", balloonResize);
+            }
+        }
+
+        window.addEventListener("keydown", balloonResize);
+    </script>
+</body>
+
+</html>

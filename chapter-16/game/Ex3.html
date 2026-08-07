@@ -1,0 +1,82 @@
+<!doctype html>
+<script src="code/chapter/16_game.js"></script>
+<script src="code/levels.js"></script>
+<script src="code/_stop_keys.js"></script>
+
+<link rel="stylesheet" href="css/game.css">
+<style>
+    .monster {
+        background: purple
+    }
+</style>
+
+<body>
+    <script>
+        class Monster {
+            constructor(pos, speed) {
+                this.pos = pos;
+                this.speed = speed;
+            }
+
+            static initSpeed = new Vec(2, 0);
+            static squishToleranceSize = 0.3;
+
+            get type() { return "monster"; }
+
+            static create(pos) {
+                return new Monster(pos.plus(new Vec(0, -1)), Monster.initSpeed);
+            }
+
+            update(time, state) {
+                let newPos = this.pos.plus(this.speed.times(time));
+
+                // Stops when it hits a wall, and displays nicely
+                if (state.level.touches(newPos, this.size, "wall")) {
+                    return new Monster(this.pos, this.speed.times(0));
+                }
+
+                // Follows the player
+                if (state.player.pos.x > newPos.x) {
+                    return new Monster(
+                        newPos,
+                        new Vec(Math.abs(Monster.initSpeed.x), this.speed.y)
+                    );
+                } else {
+                    return new Monster(
+                        newPos,
+                        new Vec(-Math.abs(Monster.initSpeed.x), this.speed.y)
+                    );
+                }
+            }
+
+            collide(state) {
+                // If the player isn't near the top of the monster, then the game is lost
+                // Otherwise, remove the monster from the game
+                if (state.player.pos.y + state.player.size.y >= this.pos.y + Monster.squishToleranceSize) {
+                    return new State(state.level, state.actors, "lost");
+                } else {
+                    return new State(state.level, state.actors.filter(actor => actor != this), "playing");
+                }
+            }
+        }
+
+        Monster.prototype.size = new Vec(1.2, 2);
+
+        levelChars["M"] = Monster;
+
+        runLevel(new Level(`
+..................................
+.################################.
+.#..............................#.
+.#..............................#.
+.#..............................#.
+.#...........................o..#.
+.#..@...........................#.
+.##########..............########.
+..........#..o..o..o..o..#........
+..........#...........M..#........
+..........################........
+..................................
+`), DOMDisplay);
+    </script>
+</body>

@@ -1,0 +1,54 @@
+<!doctype html>
+
+<canvas width="600" height="600"></canvas>
+<script>
+    var results = [
+        { name: "Satisfied", count: 1043, color: "lightblue" },
+        { name: "Neutral", count: 563, color: "lightgreen" },
+        { name: "Unsatisfied", count: 510, color: "pink" },
+        { name: "No comment", count: 175, color: "silver" }
+    ];
+
+    let cx = document.querySelector("canvas").getContext("2d");
+    let total = results
+        .reduce((sum, { count }) => sum + count, 0);
+    let currentAngle = -0.5 * Math.PI;
+    let centerX = 300, centerY = 300;
+
+    // Add code to draw the slice labels in this loop.
+    for (let result of results) {
+        const radius = 100;
+        let sliceAngle = (result.count / total) * 2 * Math.PI;
+        cx.beginPath();
+        cx.arc(centerX, centerY, radius,
+            currentAngle, currentAngle + sliceAngle);
+        currentAngle += sliceAngle;
+        cx.lineTo(centerX, centerY);
+        cx.fillStyle = result.color;
+        cx.fill();
+
+        const middleAngle = (currentAngle - sliceAngle / 2) % (2 * Math.PI);
+        const lineRadius = radius + 12;
+        const textRadius = radius + 20;
+        const lineStartX = centerX + Math.cos(middleAngle) * radius;
+        const lineStartY = centerY + Math.sin(middleAngle) * radius;
+        const lineEndX = centerX + Math.cos(middleAngle) * lineRadius;
+        const lineEndY = centerY + Math.sin(middleAngle) * lineRadius;
+        const baselineX = centerX + Math.cos(middleAngle) * textRadius;
+        const baselineY = centerY + Math.sin(middleAngle) * textRadius;
+
+        cx.beginPath();
+        cx.moveTo(lineStartX, lineStartY);
+        cx.lineTo(lineEndX, lineEndY);
+        cx.strokeStyle = "hsl(240, 6%, 40%)";
+        cx.lineWidth = "1.5";
+        cx.stroke();
+
+        cx.font = "20px 'GT Walsheim Pro'";
+        if (baselineX < centerX) {
+            cx.textAlign = "right";
+        }
+        cx.fillStyle = "hsl(240, 8%, 12%)";
+        cx.fillText(result.name, baselineX, baselineY);
+    }
+</script>

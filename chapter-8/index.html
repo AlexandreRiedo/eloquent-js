@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <h1>Chapter 8 Exercices</h1>
+    <h2>Ex. 1: Retry</h2>
+    <p id="ex-1"></p>
+    <h2>Ex. 2: The Locked Box</h2>
+    <p id="ex-2"></p>
+
+    <!-- Exercice 1 -->
+    <script>
+        let $p1 = document.getElementById("ex-1");
+        let text1 = "";
+
+        class MultiplicatorUnitFailure extends Error { }
+
+        function primitiveMultiply(a, b) {
+            if (Math.random() < 0.2) {
+                return a * b;
+            } else {
+                throw new MultiplicatorUnitFailure("Klunk");
+            }
+        }
+
+        function reliableMultiply(a, b) {
+            let result;
+            for (; ;) {
+                try {
+                    result = primitiveMultiply(a, b);
+                    break
+                } catch (error) {
+                    if (error instanceof MultiplicatorUnitFailure) {
+                        // console.log(error);
+                    } else {
+                        throw error;
+                    }
+                }
+            }
+            return result;
+        }
+
+        console.log(reliableMultiply(8, 8));
+        // → 64
+
+        $p1.innerText += text1 + "Cf. the console."; 
+    </script>
+
+    <!-- Exercice 2 -->
+    <script>
+        let $p2 = document.getElementById("ex-2");
+        let text2 = "";
+
+        const box = new class {
+            locked = true;
+            #content = [];
+
+            unlock() { this.locked = false; }
+            lock() { this.locked = true; }
+            get content() {
+                if (this.locked) throw new Error("Locked!");
+                return this.#content;
+            }
+        };
+
+        function withBoxUnlocked(body) {
+            let initState = box.locked;
+            box.unlock();
+            try {
+                body();
+            } finally {
+                if (initState) {
+                    box.lock();
+                }
+            }
+
+        }
+
+
+        withBoxUnlocked(() => {
+            box.content.push("gold piece");
+            console.log("pushed gold...")
+        });
+
+        try {
+            withBoxUnlocked(() => {
+                throw new Error("Pirates on the horizon! Abort!");
+            });
+        } catch (e) {
+            console.log("Error raised: " + e);
+        }
+
+        console.log(box.locked);
+        // → true
+        box.unlock()
+        console.log(box.content)
+
+        withBoxUnlocked(() => {
+            box.content.push("gold piece 2");
+            console.log("pushed another gold...")
+        });
+
+        console.log(box.locked);
+        // → false !
+        console.log(box.content)
+
+
+        $p2.innerText += text2 + "Cf. the console."; 
+    </script>
+
+</body>
+
+</html>

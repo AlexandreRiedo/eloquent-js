@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <h1>Chapter 3 Exercices</h1>
+    <h2>Ex. 1: Minimum</h2>
+    <p id="ex-1"></p>
+
+    <h2>Ex. 2: Recursion</h2>
+    <p id="ex-2"></p>
+
+    <h2>Ex. 3: Bean Counting</h2>
+    <p id="ex-3"></p>
+
+    <!-- Exercice 1 -->
+    <script>
+        let $p1 = document.getElementById("ex-1");
+        let text1 = "";
+
+        function min(a, b) {
+            if (a < b) {
+                return a;
+            } else if (b < a) {
+                return b;
+            }
+        }
+
+        text1 += min(10, -4);
+
+        $p1.innerText += text1;
+    </script>
+
+    <!-- Exercice 2 -->
+    <script>
+        let $p2 = document.getElementById("ex-2");
+        let text2 = "";
+
+        function isEven(numberToTest) {
+            if (numberToTest === 0) {
+                return true;
+            } else if (numberToTest === 1) {
+                return false;
+            }
+
+            if (numberToTest < 0) {
+                return isEven(numberToTest + 2);
+            } else {
+                return isEven(numberToTest - 2);
+            }
+        }
+
+        text2 += "50 : " + isEven(50) + "\n";
+        text2 += "75 : " + isEven(75) + "\n";
+        text2 += "3 : " + isEven(3) + "\n";
+        text2 += "-1 : " + isEven(-1) + "\n";
+        text2 += "-12456 : " + isEven(-12456) + "\n";
+
+        $p2.innerText += text2;
+    </script>
+
+    <!-- Exercice 3 -->
+    <script>
+        let $p3 = document.getElementById("ex-3");
+        let text3 = "";
+
+        function countChar(stringInput, charToCount) {
+            let count = 0;
+
+            for (let i = 0; i < stringInput.length; i++) {
+                if (stringInput[i] === charToCount) {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
+        text3 += "Test time ! Count the 't's of this string : " + countChar("Test time ! Count the 't's of this string : ", "t");
+
+        $p3.innerText += text3;
+    </script>
+</body>
+
+</html>

@@ -4,12 +4,6 @@ body {
     font-family: sans-serif;
 }
 
-.container-width {
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-}
-
 #info-h1 {
     margin-bottom: 0.2rem;
     font-size: 2.5rem;
@@ -18,6 +12,11 @@ body {
 #info-p {
     margin-top: 0rem;
     margin-bottom: 6rem;
+}
+
+.container-width {
+    display: flex;
+    flex-direction: column;
 }
 
 #file-select {
@@ -30,5 +29,11 @@ body {
     width: auto;
     max-width: 60rem;
     height: 25rem;
+    margin-bottom: 1rem;
     white-space: nowrap;
+}
+
+#file-button {
+    height: 2rem;
+    width: 8rem;
 }

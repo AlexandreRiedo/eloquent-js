@@ -1,3 +1,4 @@
+const fileForm = document.getElementById("file-form");
 const fileSelect = document.getElementById("file-select");
 const fileTextarea = document.getElementById("file-textarea");
 
@@ -7,7 +8,19 @@ fileSelect.addEventListener("change", async (event) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         fileTextarea.value = await res.text();
     } catch (e) {
-        console.log("fileSelect eventListener error: " + e);
+        console.log("fileSelect changeEvent error: " + e);
+    }
+});
+
+fileForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    try {
+        const res = await fetch(fileSelect.value, {
+            method: "PUT",
+            body: fileTextarea.value,
+        });
+    } catch (e) {
+        console.log("fileForm submitEvent error:" + e);
     }
 });
 

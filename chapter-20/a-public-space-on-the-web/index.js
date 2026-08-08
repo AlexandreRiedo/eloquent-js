@@ -1,6 +1,11 @@
+const fileButton = document.getElementById("file-button");
 const fileForm = document.getElementById("file-form");
 const fileSelect = document.getElementById("file-select");
 const fileTextarea = document.getElementById("file-textarea");
+
+const FILEBUTTON_DEFAULT_TEXT = fileButton.textContent;
+const FILEBUTTON_FAILURE_TEXT = "Error! Nothing sent";
+const FILEBUTTON_SUCCESS_TEXT = "Sent Successfully";
 
 fileSelect.addEventListener("change", async (event) => {
     try {
@@ -19,8 +24,18 @@ fileForm.addEventListener("submit", async (event) => {
             method: "PUT",
             body: fileTextarea.value,
         });
+        fileButton.textContent = FILEBUTTON_SUCCESS_TEXT;
+        setTimeout(
+            () => (fileButton.textContent = FILEBUTTON_DEFAULT_TEXT),
+            2000,
+        );
     } catch (e) {
         console.log("fileForm submitEvent error:" + e);
+        fileButton.textContent = FILEBUTTON_FAILURE_TEXT;
+        setTimeout(
+            () => (fileButton.textContent = FILEBUTTON_DEFAULT_TEXT),
+            2000,
+        );
     }
 });
 

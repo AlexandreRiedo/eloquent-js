@@ -2,13 +2,29 @@
 
 <html>
     <head>
-        <meta charset="UTF-8" />
+        <meta
+            charset="UTF-8"
+            name="viewport"
+            content="width=device-width, initial-scale=1"
+        />
+        <link href="/index.css" rel="stylesheet" type="text/css" />
         <title>A Public Space On The Web</title>
     </head>
 
     <body>
-        <h1>I love JavaScript</h1>
-        <p>Who doesn't love === and callbacks!</p>
+        <h1 id="info-h1">A Public Space On The Web</h1>
+        <p id="info-p">
+            Use the form below to interact with the server's files!
+        </p>
+
+        <div class="container-width">
+            <label for="file-select">Selected File</label>
+            <select name="file-select" id="file-select">
+                <option value="TFF">test</option>
+            </select>
+
+            <textarea id="file-textarea" name="file-textarea"></textarea>
+        </div>
 
         <script src="/index.js"></script>
     </body>

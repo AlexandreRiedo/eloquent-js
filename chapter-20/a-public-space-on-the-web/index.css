@@ -30,4 +30,5 @@ body {
     width: auto;
     max-width: 60rem;
     height: 25rem;
+    white-space: nowrap;
 }

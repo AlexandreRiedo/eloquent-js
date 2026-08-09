@@ -37,7 +37,7 @@ const defaultHeaders = { "Content-Type": "text/plain" };
 async function serveFromRouter(server, request, response, next) {
     let resolved = await router.resolve(request, server).catch((error) => {
         if (error.status != null) return error;
-        return { body: String(err), status: 500 };
+        return { body: String(error), status: 500 };
     });
     if (!resolved) return next();
     let { body, status = 200, headers = defaultHeaders } = await resolved;
@@ -66,6 +66,7 @@ router.add("DELETE", talkPath, async (server, title) => {
     return { status: 204 };
 });
 
+import { readFileSync, writeFile } from "node:fs";
 import { json as readJSON } from "node:stream/consumers";
 
 router.add("PUT", talkPath, async (server, title, request) => {
@@ -143,11 +144,23 @@ SkillShareServer.prototype.waitForChanges = function (time) {
     });
 };
 
+const SERVER_DATA_FILE = "server_data.json";
 SkillShareServer.prototype.updated = function () {
     this.version++;
     let response = this.talkResponse();
+    writeFile(SERVER_DATA_FILE, JSON.stringify(this.talks), "utf-8", (err) => {
+        if (err) console.log(`Failed to write ${SERVER_DATA_FILE}: ${err}`);
+        else console.log(`${SERVER_DATA_FILE} written.`);
+    });
     this.waiting.forEach((resolve) => resolve(response));
     this.waiting = [];
 };
 
-new SkillShareServer({}).start(8000);
+let talksOnFile = {};
+try {
+    talksOnFile = JSON.parse(readFileSync(SERVER_DATA_FILE, "utf-8"));
+    console.log(`${SERVER_DATA_FILE} successfully read.`);
+} catch (e) {
+    console.log(`Couldn't read ${SERVER_DATA_FILE}, starting up on empty.`);
+}
+new SkillShareServer(talksOnFile).start(8000);

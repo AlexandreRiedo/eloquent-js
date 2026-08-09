@@ -66,7 +66,7 @@ router.add("DELETE", talkPath, async (server, title) => {
     return { status: 204 };
 });
 
-import { writeFile } from "node:fs";
+import { readFileSync, writeFile } from "node:fs";
 import { json as readJSON } from "node:stream/consumers";
 
 router.add("PUT", talkPath, async (server, title, request) => {
@@ -144,25 +144,27 @@ SkillShareServer.prototype.waitForChanges = function (time) {
     });
 };
 
-const fileName = "./talks.json";
-
+const SERVER_DATA_FILE = "./server_data.json";
 SkillShareServer.prototype.updated = function () {
     this.version++;
     let response = this.talkResponse();
     this.waiting.forEach((resolve) => resolve(response));
     this.waiting = [];
-
-    writeFile(fileName, JSON.stringify(this.talks), (e) => {
-        if (e) throw e;
+    writeFile(SERVER_DATA_FILE, JSON.stringify(this.talks), "utf-8", (err) => {
+        if (err) console.log(`Failed to write ${SERVER_DATA_FILE}: ${err}`);
+        else console.log(`${SERVER_DATA_FILE} written.`);
     });
 };
 
 function loadTalks() {
+    let talksOnFile = {};
     try {
-        return JSON.parse(readFileSync(fileName, "utf8"));
+        talksOnFile = JSON.parse(readFileSync(SERVER_DATA_FILE, "utf-8"));
+        console.log(`${SERVER_DATA_FILE} successfully read.`);
     } catch (e) {
-        return {};
+        console.log(`Couldn't read ${SERVER_DATA_FILE}, starting up on empty.`);
     }
+    return talksOnFile;
 }
 
 new SkillShareServer(loadTalks()).start(8000);

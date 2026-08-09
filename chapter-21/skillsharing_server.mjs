@@ -144,23 +144,27 @@ SkillShareServer.prototype.waitForChanges = function (time) {
     });
 };
 
-const SERVER_DATA_FILE = "server_data.json";
+const SERVER_DATA_FILE = "./server_data.json";
 SkillShareServer.prototype.updated = function () {
     this.version++;
     let response = this.talkResponse();
+    this.waiting.forEach((resolve) => resolve(response));
+    this.waiting = [];
     writeFile(SERVER_DATA_FILE, JSON.stringify(this.talks), "utf-8", (err) => {
         if (err) console.log(`Failed to write ${SERVER_DATA_FILE}: ${err}`);
         else console.log(`${SERVER_DATA_FILE} written.`);
     });
-    this.waiting.forEach((resolve) => resolve(response));
-    this.waiting = [];
 };
 
-let talksOnFile = {};
-try {
-    talksOnFile = JSON.parse(readFileSync(SERVER_DATA_FILE, "utf-8"));
-    console.log(`${SERVER_DATA_FILE} successfully read.`);
-} catch (e) {
-    console.log(`Couldn't read ${SERVER_DATA_FILE}, starting up on empty.`);
+function loadTalks() {
+    let talksOnFile = {};
+    try {
+        talksOnFile = JSON.parse(readFileSync(SERVER_DATA_FILE, "utf-8"));
+        console.log(`${SERVER_DATA_FILE} successfully read.`);
+    } catch (e) {
+        console.log(`Couldn't read ${SERVER_DATA_FILE}, starting up on empty.`);
+    }
+    return talksOnFile;
 }
-new SkillShareServer(talksOnFile).start(8000);
+
+new SkillShareServer(loadTalks()).start(8000);

@@ -24,6 +24,20 @@ function handleAction(state, action) {
                 message: action.message,
             }),
         }).catch(reportError);
+    } else if (action.type == "setInputComment") {
+        let inputComments = {
+            ...state.inputComments,
+            [action.elementID]: action.value,
+        };
+        localStorage.setItem("inputComments", JSON.stringify(inputComments));
+        return { ...state, inputComments: inputComments };
+    } else if (action.type == "unsetInputComment") {
+        delete state.inputComments[action.elementID];
+        localStorage.setItem(
+            "inputComments",
+            JSON.stringify(state.inputComments),
+        );
+        return state;
     }
     return state;
 }
@@ -68,7 +82,7 @@ function elt(type, props, ...children) {
     return dom;
 }
 
-function renderTalk(talk, dispatch) {
+function renderTalk(talk, dispatch, state) {
     return elt(
         "section",
         { className: "talk" },
@@ -98,14 +112,28 @@ function renderTalk(talk, dispatch) {
                     event.preventDefault();
                     let form = event.target;
                     dispatch({
+                        type: "unsetInputComment",
+                        elementID: talk.title,
+                    });
+                    dispatch({
                         type: "newComment",
                         talk: talk.title,
                         message: form.elements.comment.value,
                     });
-                    form.reset();
                 },
             },
-            elt("input", { type: "text", name: "comment" }),
+            elt("input", {
+                type: "text",
+                name: "comment",
+                oninput(event) {
+                    dispatch({
+                        type: "setInputComment",
+                        elementID: talk.title,
+                        value: event.target.value,
+                    });
+                },
+                value: state?.inputComments?.[talk.title] ?? "",
+            }),
             " ",
             elt("button", { type: "submit" }, "Add comment"),
         ),
@@ -182,7 +210,9 @@ var SkillShareApp = class SkillShareApp {
         if (state.talks != this.talks) {
             this.talkDOM.textContent = "";
             for (let talk of state.talks) {
-                this.talkDOM.appendChild(renderTalk(talk, this.dispatch));
+                this.talkDOM.appendChild(
+                    renderTalk(talk, this.dispatch, state),
+                );
             }
             this.talks = state.talks;
         }
@@ -191,6 +221,7 @@ var SkillShareApp = class SkillShareApp {
 
 function runApp() {
     let user = localStorage.getItem("userName") || "Anon";
+    let inputComments = JSON.parse(localStorage.getItem("inputComments")) || {};
     let state, app;
     function dispatch(action) {
         state = handleAction(state, action);
@@ -199,7 +230,7 @@ function runApp() {
 
     pollTalks((talks) => {
         if (!app) {
-            state = { user, talks };
+            state = { user, talks, inputComments };
             app = new SkillShareApp(state, dispatch);
             document.body.appendChild(app.dom);
         } else {

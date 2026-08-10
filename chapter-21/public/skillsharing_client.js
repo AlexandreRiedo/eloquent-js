@@ -122,6 +122,72 @@ function renderComment(comment) {
     );
 }
 
+function renderTalkHeading(talk, dispatch) {
+    return [
+        elt(
+            "h2",
+            null,
+            talk.title,
+            " ",
+            elt(
+                "button",
+                {
+                    type: "button",
+                    onclick() {
+                        dispatch({ type: "deleteTalk", talk: talk.title });
+                    },
+                },
+                "Delete",
+            ),
+        ),
+        elt("div", null, "by ", elt("strong", null, talk.presenter)),
+        elt("p", null, talk.summary),
+    ];
+}
+
+function renderTalkCommentForm(talk, dispatch) {
+    return elt(
+        "form",
+        {
+            onsubmit(event) {
+                event.preventDefault();
+                let form = event.target;
+                dispatch({
+                    type: "newComment",
+                    talk: talk.title,
+                    message: form.elements.comment.value,
+                });
+                form.reset();
+            },
+        },
+        elt("input", { type: "text", name: "comment" }),
+        " ",
+        elt("button", { type: "submit" }, "Add comment"),
+    );
+}
+
+class Talk {
+    constructor(talk, dispatch) {
+        this.talk = talk;
+        this.dom = elt("section", { className: "talk" });
+        this.comments = talk?.comments;
+
+        renderTalkHeading(talk, dispatch).forEach((th) => {
+            this.dom.appendChild(th);
+        });
+
+        this.commentForm = renderTalkCommentForm(talk, dispatch);
+        this.dom.appendChild(this.commentForm);
+
+        this.syncTalk(talk);
+    }
+
+    syncTalk(talk) {
+        // TODO: Add missing comments
+        // TODO: Remove stale comments
+    }
+}
+
 function renderTalkForm(dispatch) {
     let title = elt("input", { type: "text" });
     let summary = elt("input", { type: "text" });
@@ -168,6 +234,7 @@ var SkillShareApp = class SkillShareApp {
     constructor(state, dispatch) {
         this.dispatch = dispatch;
         this.talkDOM = elt("div", { className: "talks" });
+        this.talkMap = new Map();
         this.dom = elt(
             "div",
             null,
@@ -179,13 +246,10 @@ var SkillShareApp = class SkillShareApp {
     }
 
     syncState(state) {
-        if (state.talks != this.talks) {
-            this.talkDOM.textContent = "";
-            for (let talk of state.talks) {
-                this.talkDOM.appendChild(renderTalk(talk, this.dispatch));
-            }
-            this.talks = state.talks;
-        }
+        // TODO: Ditch stale talks
+        // TODO: Add missing talks from state
+        // TODO: Edit existing talks from state
+        this.talks = state.talks;
     }
 };
 

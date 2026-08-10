@@ -68,7 +68,7 @@ function elt(type, props, ...children) {
     return dom;
 }
 
-function renderTalk(talk, dispatch) {
+function renderTalk(talk, dispatch, comments) {
     return elt(
         "section",
         { className: "talk" },
@@ -90,7 +90,7 @@ function renderTalk(talk, dispatch) {
         ),
         elt("div", null, "by ", elt("strong", null, talk.presenter)),
         elt("p", null, talk.summary),
-        ...talk.comments.map(renderComment),
+        comments,
         elt(
             "form",
             {
@@ -120,6 +120,22 @@ function renderComment(comment) {
         ": ",
         comment.message,
     );
+}
+
+class Talk {
+    constructor(talk, dispatch) {
+        this.comments = elt("div");
+        this.dom = renderTalk(talk, dispatch, this.comments);
+        this.syncState(talk);
+    }
+
+    syncState(talk) {
+        this.talk = talk;
+        this.comments.textContent = "";
+        for (let comment of talk.comments) {
+            this.comments.appendChild(renderComment(comment));
+        }
+    }
 }
 
 function renderTalkForm(dispatch) {
@@ -168,6 +184,7 @@ var SkillShareApp = class SkillShareApp {
     constructor(state, dispatch) {
         this.dispatch = dispatch;
         this.talkDOM = elt("div", { className: "talks" });
+        this.talkMap = new Map();
         this.dom = elt(
             "div",
             null,
@@ -179,12 +196,29 @@ var SkillShareApp = class SkillShareApp {
     }
 
     syncState(state) {
-        if (state.talks != this.talks) {
-            this.talkDOM.textContent = "";
-            for (let talk of state.talks) {
-                this.talkDOM.appendChild(renderTalk(talk, this.dispatch));
+        if (state.talks == this.talks) return;
+        this.talks = state.talks;
+
+        for (let talk of state.talks) {
+            let found = this.talkMap[talk.title];
+            if (
+                found &&
+                found.talk.presenter == talk.presenter &&
+                found.talk.summary == talk.summary
+            ) {
+                found.syncState(talk);
+            } else {
+                if (found) found.dom.remove();
+                found = new Talk(talk, this.dispatch);
+                this.talkMap[talk.title] = found;
+                this.talkDOM.appendChild(found.dom);
             }
-            this.talks = state.talks;
+        }
+        for (let title of Object.keys(this.talkMap)) {
+            if (!state.talks.some((talk) => talk.title == title)) {
+                this.talkMap[title].dom.remove();
+                delete this.talkMap[title];
+            }
         }
     }
 };

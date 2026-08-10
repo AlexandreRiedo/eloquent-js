@@ -68,50 +68,6 @@ function elt(type, props, ...children) {
     return dom;
 }
 
-function renderTalk(talk, dispatch, comments) {
-    return elt(
-        "section",
-        { className: "talk" },
-        elt(
-            "h2",
-            null,
-            talk.title,
-            " ",
-            elt(
-                "button",
-                {
-                    type: "button",
-                    onclick() {
-                        dispatch({ type: "deleteTalk", talk: talk.title });
-                    },
-                },
-                "Delete",
-            ),
-        ),
-        elt("div", null, "by ", elt("strong", null, talk.presenter)),
-        elt("p", null, talk.summary),
-        comments,
-        elt(
-            "form",
-            {
-                onsubmit(event) {
-                    event.preventDefault();
-                    let form = event.target;
-                    dispatch({
-                        type: "newComment",
-                        talk: talk.title,
-                        message: form.elements.comment.value,
-                    });
-                    form.reset();
-                },
-            },
-            elt("input", { type: "text", name: "comment" }),
-            " ",
-            elt("button", { type: "submit" }, "Add comment"),
-        ),
-    );
-}
-
 function renderComment(comment) {
     return elt(
         "p",
@@ -125,7 +81,46 @@ function renderComment(comment) {
 class Talk {
     constructor(talk, dispatch) {
         this.comments = elt("div");
-        this.dom = renderTalk(talk, dispatch, this.comments);
+        this.dom = elt(
+            "section",
+            { className: "talk" },
+            elt(
+                "h2",
+                null,
+                talk.title,
+                " ",
+                elt(
+                    "button",
+                    {
+                        type: "button",
+                        onclick: () =>
+                            dispatch({ type: "deleteTalk", talk: talk.title }),
+                    },
+                    "Delete",
+                ),
+            ),
+            elt("div", null, "by ", elt("strong", null, talk.presenter)),
+            elt("p", null, talk.summary),
+            this.comments,
+            elt(
+                "form",
+                {
+                    onsubmit(event) {
+                        event.preventDefault();
+                        let form = event.target;
+                        dispatch({
+                            type: "newComment",
+                            talk: talk.title,
+                            message: form.elements.comment.value,
+                        });
+                        form.reset();
+                    },
+                },
+                elt("input", { type: "text", name: "comment" }),
+                " ",
+                elt("button", { type: "submit" }, "Add comment"),
+            ),
+        );
         this.syncState(talk);
     }
 
@@ -184,7 +179,7 @@ var SkillShareApp = class SkillShareApp {
     constructor(state, dispatch) {
         this.dispatch = dispatch;
         this.talkDOM = elt("div", { className: "talks" });
-        this.talkMap = new Map();
+        this.talkMap = Object.create(null);
         this.dom = elt(
             "div",
             null,
